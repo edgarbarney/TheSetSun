@@ -91,3 +91,19 @@ sp/src/vgui2/*.pdb
 
 # Build support files
 sp/src/devtools/gcc9+support.o
+
+# #  Ignore lib rebuilds ???
+# mathlib.lib
+# tier1.lib
+# vgui_controls.lib
+# raytrace.lib
+# fgdlib.lib
+
+# New VS files
+*.vcxproj.filters
+*.pdb
+*.recipe
+*.vpc_crc
+*.vpc.sentinel
+*.FileListAbsolute.txt
+vpc.exe.bak
