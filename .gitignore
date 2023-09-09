@@ -92,12 +92,13 @@ sp/src/vgui2/*.pdb
 # Build support files
 sp/src/devtools/gcc9+support.o
 
-# #  Ignore lib rebuilds ???
+# #  Ignore library rebuilds ???
 # mathlib.lib
 # tier1.lib
 # vgui_controls.lib
 # raytrace.lib
 # fgdlib.lib
+sp/src/materialsystem/stdshaders/Debug_dx9_mod_hl2/game_shader_dx9.dll
 
 # New VS files
 *.vcxproj.filters
@@ -108,5 +109,8 @@ sp/src/devtools/gcc9+support.o
 *.FileListAbsolute.txt
 vpc.exe.bak
 
+
+
 # Mod Files (They are kept in a seperate directory - Folder is actually a symbolic link)
 sp/game/thesetsun_game*
+
