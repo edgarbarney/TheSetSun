@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"thesetsun" [$SOURCESDK]
+$Macro GAMENAME 	"thesetsun_game" [$SOURCESDK]
 
 $Include "$SRCDIR\game\client\client_base.vpc"
 
