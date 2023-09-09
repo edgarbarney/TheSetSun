@@ -107,3 +107,6 @@ sp/src/devtools/gcc9+support.o
 *.vpc.sentinel
 *.FileListAbsolute.txt
 vpc.exe.bak
+
+# Mod Files (They are kept in a seperate directory - Folder is actually a symbolic link)
+sp/game/thesetsun_game*
