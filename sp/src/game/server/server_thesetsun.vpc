@@ -18,7 +18,7 @@ $Configuration
 	}
 }
 
-$Project "Server (Episodic)"
+$Project "Server (The Set Sun)"
 {
 	$Folder	"Source Files"
 	{
