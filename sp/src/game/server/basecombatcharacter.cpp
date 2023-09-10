@@ -3676,7 +3676,7 @@ CBaseEntity *CBaseCombatCharacter::Weapon_FindUsable( const Vector &range )
 				continue;
 			}
 #else
-			if( FClassnameIs( pWeapon, "weapon_pistol" ) )
+			if( FClassnameIs( pWeapon, "weapon_usp" ) )
 			{
 				// No, it's a pistol.
 				continue;

@@ -124,11 +124,11 @@ private:
 };
 
 
-IMPLEMENT_SERVERCLASS_ST(CWeaponUSP, DT_WeaponPistol)
+IMPLEMENT_SERVERCLASS_ST(CWeaponUSP, DT_WeaponUSP)
 END_SEND_TABLE()
 
-LINK_ENTITY_TO_CLASS( weapon_pistol, CWeaponUSP );
-PRECACHE_WEAPON_REGISTER( weapon_pistol );
+LINK_ENTITY_TO_CLASS( weapon_usp, CWeaponUSP );
+PRECACHE_WEAPON_REGISTER( weapon_usp );
 
 BEGIN_DATADESC( CWeaponUSP )
 

@@ -65,7 +65,7 @@ void InitGlobalStrings()
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Shotgun, "weapon_shotgun");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_SMG1, "weapon_smg1");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_AR2, "weapon_ar2");
-	INITIALIZE_GLOBAL_STRING(gm_isz_class_Pistol, "weapon_pistol");
+	INITIALIZE_GLOBAL_STRING(gm_isz_class_Pistol, "weapon_usp");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Stunstick, "weapon_stunstick");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Crowbar, "weapon_crowbar");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_RPG, "weapon_rpg");

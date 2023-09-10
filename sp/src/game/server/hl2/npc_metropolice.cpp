@@ -754,7 +754,7 @@ void CNPC_MetroPolice::Spawn( void )
 #ifdef MAPBASE
 		if (!EntIsClass(pWeapon, gm_isz_class_Pistol) && !EntIsClass(pWeapon, gm_isz_class_357))
 #else
-		if( !FClassnameIs( pWeapon, "weapon_pistol" ) )
+		if( !FClassnameIs( pWeapon, "weapon_usp" ) )
 #endif
 		{
 			m_fWeaponDrawn = true;
@@ -1541,7 +1541,7 @@ void CNPC_MetroPolice::OnUpdateShotRegulator( )
 	// Only if we actually have the pistol out
 	if ( GetActiveWeapon() && EntIsClass( GetActiveWeapon(), gm_isz_class_Pistol ) )
 #else
-	if( Weapon_OwnsThisType( "weapon_pistol" ) )
+	if( Weapon_OwnsThisType( "weapon_usp" ) )
 #endif
 	{
 		if ( m_nBurstMode == BURST_NOT_ACTIVE )
@@ -5173,7 +5173,7 @@ int CNPC_MetroPolice::TranslateSchedule( int scheduleType )
 #ifdef MAPBASE
 			if (GetActiveWeapon() && EntIsClass(GetActiveWeapon(), gm_isz_class_Pistol))
 #else
-			if ( Weapon_OwnsThisType( "weapon_pistol" ) )
+			if ( Weapon_OwnsThisType( "weapon_usp" ) )
 #endif
 			{
 				if (  GetEnemy() && GetEnemy()->GetAbsOrigin().DistToSqr( GetAbsOrigin() ) > 300*300 )
@@ -5885,7 +5885,7 @@ WeaponProficiency_t CNPC_MetroPolice::CalcWeaponProficiency( CBaseCombatWeapon *
 #ifdef MAPBASE
 	if (EntIsClass(pWeapon, gm_isz_class_Pistol))
 #else
-	if( FClassnameIs( pWeapon, "weapon_pistol" ) )
+	if( FClassnameIs( pWeapon, "weapon_usp" ) )
 #endif
 	{
 		return WEAPON_PROFICIENCY_POOR;
