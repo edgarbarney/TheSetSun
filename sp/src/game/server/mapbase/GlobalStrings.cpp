@@ -70,6 +70,7 @@ void InitGlobalStrings()
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Crowbar, "weapon_crowbar");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_RPG, "weapon_rpg");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_357, "weapon_357");
+	INITIALIZE_GLOBAL_STRING(gm_isz_class_357, "weapon_1911");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Grenade, "weapon_frag");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Physcannon, "weapon_physcannon");
 	INITIALIZE_GLOBAL_STRING(gm_isz_class_Crossbow, "weapon_crossbow");
