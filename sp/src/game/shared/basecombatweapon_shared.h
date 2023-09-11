@@ -246,9 +246,9 @@ public:
 	virtual bool			HasAmmo( void );
 
 	// Weapon Pickup For Player
-	virtual void			SetPickupTouch( void );
-	virtual void 			DefaultTouch( CBaseEntity *pOther );	// default weapon touch
+	virtual void			SetPickupUse( void );
 	virtual void			GiveTo( CBaseEntity *pOther );
+	virtual void			DefaultUse( CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value );
 
 	// HUD Hints
 	virtual bool			ShouldDisplayAltFireHUDHint();

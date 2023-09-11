@@ -529,7 +529,7 @@ void CBaseCombatWeapon::FallInit( void )
 #endif //CLIENT_DLL
 	}	
 
-	SetPickupTouch();
+	SetPickupUse();
 	
 	SetThink( &CBaseCombatWeapon::FallThink );
 
@@ -602,7 +602,7 @@ void CBaseCombatWeapon::Materialize( void )
 	AddSolidFlags( FSOLID_TRIGGER );
 #endif
 
-	SetPickupTouch();
+	SetPickupUse();
 
 	SetThink (NULL);
 }
@@ -739,7 +739,7 @@ void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 		// important in a few spots in the game where the player could potentially +use pickup
 		// and then THROW AWAY a vital weapon, rendering them unable to continue the game.
 		//
-		if ( pPlayer->BumpWeapon( this ) )
+		if ( pPlayer->PickupWeapon( this ) )
 		{
 			OnPickedUp( pPlayer );
 		}

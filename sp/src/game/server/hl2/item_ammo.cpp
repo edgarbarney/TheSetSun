@@ -1006,7 +1006,7 @@ void CItem_AmmoCrate::HandleAnimEvent( animevent_t *pEvent )
 					pWeapon->m_iPrimaryAmmoType = 0;
 					pWeapon->m_iSecondaryAmmoType = 0;
 					pWeapon->Spawn();
-					if ( !m_hActivator->BumpWeapon( pWeapon ) )
+					if ( !m_hActivator->PickupWeapon( pWeapon ) )
 					{
 						UTIL_Remove( pEntity );
 					}

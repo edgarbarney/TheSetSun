@@ -3359,7 +3359,7 @@ void CHL2_Player::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 // Input  : pWeapon - the weapon that the player bumped into.
 // Output : Returns true if player picked up the weapon
 //-----------------------------------------------------------------------------
-bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
+bool CHL2_Player::PickupWeapon( CBaseCombatWeapon *pWeapon )
 {
 
 #if	HL2_SINGLE_PRIMARY_WEAPON_MODE
@@ -3431,7 +3431,7 @@ bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 	}
 #else
 
-	return BaseClass::BumpWeapon( pWeapon );
+	return BaseClass::PickupWeapon( pWeapon );
 
 #endif
 

@@ -6946,11 +6946,12 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 extern bool UTIL_ItemCanBeTouchedByPlayer( CBaseEntity *pItem, CBasePlayer *pPlayer );
 
 //-----------------------------------------------------------------------------
-// Purpose: Player reacts to bumping a weapon. 
+// Formerly, bump weapon
+// Purpose: Player reacts to picking up a weapon. 
 // Input  : pWeapon - the weapon that the player bumped into.
 // Output : Returns true if player picked up the weapon
 //-----------------------------------------------------------------------------
-bool CBasePlayer::BumpWeapon( CBaseCombatWeapon *pWeapon )
+bool CBasePlayer::PickupWeapon( CBaseCombatWeapon *pWeapon )
 {
 	CBaseCombatCharacter *pOwner = pWeapon->GetOwner();
 
@@ -7821,7 +7822,7 @@ void CBasePlayer::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 	BaseClass::Weapon_Equip( pWeapon );
 
 #ifdef MAPBASE
-	// BumpWeapon's code appeared to be deprecated; The same operation is already handled here, but with much more code involved.
+	// PickupWeapon's code appeared to be deprecated; The same operation is already handled here, but with much more code involved.
 	// There's also an unused weighting system which was overridden by that deprecated code. The unused weighting code can be enabled
 	// via player_autoswitch_on_first_pickup.
 	bool bShouldSwitch = false;

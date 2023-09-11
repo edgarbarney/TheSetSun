@@ -50,10 +50,10 @@ public:
 	void Operator_ForceNPCFire( CBaseCombatCharacter  *pOperator, bool bSecondary );
 	void Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 
-	virtual void SetPickupTouch( void )
+	virtual void SetPickupUse( void )
 	{
 		// Alyx gun cannot be picked up
-		SetTouch(NULL);
+		SetUse(NULL);
 	}
 
 #ifdef MAPBASE

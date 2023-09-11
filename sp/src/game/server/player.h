@@ -545,7 +545,7 @@ public:
 	
 	void					AddPoints( int score, bool bAllowNegativeScore );
 	void					AddPointsToTeam( int score, bool bAllowNegativeScore );
-	virtual bool			BumpWeapon( CBaseCombatWeapon *pWeapon );
+	virtual bool			PickupWeapon( CBaseCombatWeapon *pWeapon );
 	bool					RemovePlayerItem( CBaseCombatWeapon *pItem );
 	CBaseEntity				*HasNamedPlayerItem( const char *pszItemName );
 	bool 					HasWeapons( void );// do I have ANY weapons?

@@ -101,7 +101,7 @@ BEGIN_DATADESC( CWeapon_SLAM )
 	DEFINE_FIELD( m_flWallSwitchTime, FIELD_TIME ),
 
 	// Function Pointers
-	DEFINE_FUNCTION( SlamTouch ),
+	//DEFINE_FUNCTION( SlamTouch ),
 
 END_DATADESC()
 
@@ -157,35 +157,35 @@ void CWeapon_SLAM::Precache( void )
 }
 
 //------------------------------------------------------------------------------
-// Purpose : Override to use slam's pickup touch function
+// Purpose : Override to use slam's pickup use function
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CWeapon_SLAM::SetPickupTouch( void )
-{
-	SetTouch(&CWeapon_SLAM::SlamTouch);
-}
+//void CWeapon_SLAM::SetPickupUse( void )
+//{
+//	
+//}
 
 //-----------------------------------------------------------------------------
 // Purpose: Override so give correct ammo
 // Input  : pOther - the entity that touched me
 // Output :
 //-----------------------------------------------------------------------------
-void CWeapon_SLAM::SlamTouch( CBaseEntity *pOther )
-{
-#ifdef GAME_DLL
-	CBaseCombatCharacter* pBCC = ToBaseCombatCharacter( pOther );
-
-	// Can I even pick stuff up?
-	if ( pBCC && !pBCC->IsAllowedToPickupWeapons() )
-		return;
-#endif
-
-	// ---------------------------------------------------
-	//  First give weapon to touching entity if allowed
-	// ---------------------------------------------------
-	BaseClass::DefaultTouch(pOther);
-}
+//void CWeapon_SLAM::SlamUse( CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value )
+//{
+//#ifdef GAME_DLL
+//	CBaseCombatCharacter* pBCC = ToBaseCombatCharacter( pOther );
+//
+//	// Can I even pick stuff up?
+//	if ( pBCC && !pBCC->IsAllowedToPickupWeapons() )
+//		return;
+//#endif
+//
+//	// ---------------------------------------------------
+//	//  First give weapon to touching entity if allowed
+//	// ---------------------------------------------------
+//	BaseClass::DefaultUse(pActivator, pCaller, useType, value);
+//}
 
 //------------------------------------------------------------------------------
 // Purpose :

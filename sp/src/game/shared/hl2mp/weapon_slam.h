@@ -64,8 +64,8 @@ public:
 	void				Weapon_Switch( void );
 	void				SLAMThink( void );
 	
-	void				SetPickupTouch( void );
-	void				SlamTouch( CBaseEntity *pOther );	// default weapon touch
+	//void				SetPickupUse( void );
+	//void				SlamUse( CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value );	// default weapon use
 	void				ItemPostFrame( void );	
 	bool				Reload( void );
 	void				SetSlamState( int newState );

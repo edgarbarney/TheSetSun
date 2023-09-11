@@ -282,7 +282,7 @@ public:
 #endif
 
 	virtual int			GiveAmmo( int nCount, int nAmmoIndex, bool bSuppressSound);
-	virtual bool		BumpWeapon( CBaseCombatWeapon *pWeapon );
+	virtual bool		PickupWeapon( CBaseCombatWeapon *pWeapon );
 	
 	virtual bool		Weapon_CanUse( CBaseCombatWeapon *pWeapon );
 	virtual void		Weapon_Equip( CBaseCombatWeapon *pWeapon );

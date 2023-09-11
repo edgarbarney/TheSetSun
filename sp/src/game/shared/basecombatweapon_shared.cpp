@@ -792,7 +792,7 @@ void CBaseCombatWeapon::Drop( const Vector &vecVelocity )
 	RemoveEffects( EF_NODRAW );
 	FallInit();
 	SetGroundEntity( NULL );
-	SetThink( &CBaseCombatWeapon::SetPickupTouch );
+	SetThink( &CBaseCombatWeapon::SetPickupUse );
 	SetTouch(NULL);
 
 	if( hl2_episodic.GetBool() )
@@ -930,42 +930,42 @@ void CBaseCombatWeapon::MakeTracer( const Vector &vecTracerSrc, const trace_t &t
 
 void CBaseCombatWeapon::GiveTo( CBaseEntity *pOther )
 {
-	DefaultTouch( pOther );
+	DefaultUse( pOther, pOther, USE_TYPE::USE_ON, 0);
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Default Touch function for player picking up a weapon (not AI)
+// Purpose: Default use function for player picking up a weapon (not AI)
 // Input  : pOther - the entity that touched me
 // Output :
 //-----------------------------------------------------------------------------
-void CBaseCombatWeapon::DefaultTouch( CBaseEntity *pOther )
+void CBaseCombatWeapon::DefaultUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
 {
 #if !defined( CLIENT_DLL )
 	// Can't pick up dissolving weapons
-	if ( IsDissolving() )
+	if (IsDissolving())
 		return;
 
 	// if it's not a player, ignore
-	CBasePlayer *pPlayer = ToBasePlayer(pOther);
-	if ( !pPlayer )
+	CBasePlayer* pPlayer = ToBasePlayer(pActivator);
+	if (!pPlayer)
 		return;
 
-	if( UTIL_ItemCanBeTouchedByPlayer(this, pPlayer) )
+	if (UTIL_ItemCanBeTouchedByPlayer(this, pPlayer))
 	{
 		// This makes sure the player could potentially take the object
 		// before firing the cache interaction output. That doesn't mean
 		// the player WILL end up taking the object, but cache interactions
 		// are fired as soon as you prove you have found the object, not
 		// when you finally acquire it.
-		m_OnCacheInteraction.FireOutput( pOther, this );
+		m_OnCacheInteraction.FireOutput(pActivator, this);
 	}
 
-	if( HasSpawnFlags(SF_WEAPON_NO_PLAYER_PICKUP) )
+	if (HasSpawnFlags(SF_WEAPON_NO_PLAYER_PICKUP))
 		return;
 
-	if (pPlayer->BumpWeapon(this))
+	if (pPlayer->PickupWeapon(this))
 	{
-		OnPickedUp( pPlayer );
+		OnPickedUp(pPlayer);
 	}
 #endif
 }
@@ -1065,10 +1065,10 @@ void CBaseCombatWeapon::RescindReloadHudHint()
 }
 
 
-void CBaseCombatWeapon::SetPickupTouch( void )
+void CBaseCombatWeapon::SetPickupUse( void )
 {
 #if !defined( CLIENT_DLL )
-	SetTouch(&CBaseCombatWeapon::DefaultTouch);
+	SetUse(&CBaseCombatWeapon::DefaultUse);
 
 	if ( gpGlobals->maxClients > 1 )
 	{
@@ -3232,12 +3232,12 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 //	DEFINE_FIELD( m_bJustRestored, FIELD_BOOLEAN ),
 
 	// Function pointers
-	DEFINE_ENTITYFUNC( DefaultTouch ),
+	DEFINE_ENTITYFUNC( DefaultUse ),
 	DEFINE_THINKFUNC( FallThink ),
 	DEFINE_THINKFUNC( Materialize ),
 	DEFINE_THINKFUNC( AttemptToMaterialize ),
 	DEFINE_THINKFUNC( DestroyItem ),
-	DEFINE_THINKFUNC( SetPickupTouch ),
+	DEFINE_THINKFUNC( SetPickupUse ),
 
 	DEFINE_THINKFUNC( HideThink ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "HideWeapon", InputHideWeapon ),
