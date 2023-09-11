@@ -2490,7 +2490,7 @@ bool CBaseCombatWeapon::ReloadsSingly( void ) const
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::Reload( void )
 {
-	return DefaultReload( GetMaxClip1(), GetMaxClip2(), ACT_VM_RELOAD );
+	return DefaultReload( GetMaxClip1(), GetMaxClip2(), (m_iClip1 < 1) ? ACT_VM_RELOAD_EMPTY : ACT_VM_RELOAD );
 }
 
 #ifdef MAPBASE
