@@ -259,26 +259,8 @@ CWeapon1911::CWeapon1911(void)
 //-----------------------------------------------------------------------------
 void CWeapon1911::Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator)
 {
-	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
-
 	switch (pEvent->event)
 	{
-	case EVENT_WEAPON_RELOAD:
-	{
-		CEffectData data;
-
-		// Emit six spent shells
-		for (int i = 0; i < 6; i++)
-		{
-			data.m_vOrigin = pOwner->WorldSpaceCenter() + RandomVector(-4, 4);
-			data.m_vAngles = QAngle(90, random->RandomInt(0, 360), 0);
-			data.m_nEntIndex = entindex();
-
-			DispatchEffect("ShellEject", data);
-		}
-
-		break;
-	}
 #ifdef MAPBASE
 	case EVENT_WEAPON_PISTOL_FIRE:
 	{
@@ -367,8 +349,8 @@ void CWeapon1911::PrimaryAttack(void)
 	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.75;
-	m_flNextSecondaryAttack = gpGlobals->curtime + 0.75;
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
+	m_flNextSecondaryAttack = gpGlobals->curtime + 0.2f;
 
 	m_iClip1--;
 
@@ -388,7 +370,7 @@ void CWeapon1911::PrimaryAttack(void)
 
 	pPlayer->SnapEyeAngles(angles);
 
-	pPlayer->ViewPunch(QAngle(-8, random->RandomFloat(-2, 2), 0));
+	pPlayer->ViewPunch(QAngle(-1, random->RandomFloat(-2, 2), 0));
 
 	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), 600, 0.2, GetOwner());
 
