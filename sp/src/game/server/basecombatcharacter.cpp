@@ -2309,6 +2309,70 @@ void CBaseCombatCharacter::Weapon_HandleEquip( CBaseCombatWeapon *pWeapon )
 	// Add the weapon to my weapon inventory
 	if (IsPlayer())
 	{
+		// Let's handle slots for The Set Sun
+		// Every slot can only have one weapon in it.
+		// First slot (index 0) is for holster, Second slot it for pistols, third and fourth are for rifles AND pistols, fifth is for heavy weapons.
+		
+		// pWeapon is the picked up weapon, will replace the active weapon. 
+		// So set it's slot to the acoording slot data.
+		// If the picked up weapon is a pistol, set it's slot to 2.
+		// If the picked up weapon is a rifle, set it's slot to 3 or 4, depending on empty slots and current active weapon.
+		// If the picked up weapon is a heavy weapon, set it's slot to 5.
+		// Don't forget the slots are indexed from 0, so the fifth slot is actually index 4.
+
+		CBaseCombatWeapon* pActiveWeapon = GetActiveWeapon();
+
+		int iActiveSlot = -1;
+		if (pActiveWeapon)
+			iActiveSlot = pActiveWeapon->GetSlot();
+
+		int iNewSlot = 0;
+
+		if (pWeapon->WeaponClassify() == WeaponClass_t::WEPCLASS_HANDGUN)
+		{
+			// Pistol
+			iNewSlot = 1;
+		}
+		else if (pWeapon->WeaponClassify() == WeaponClass_t::WEPCLASS_RIFLE || pWeapon->WeaponClassify() == WeaponClass_t::WEPCLASS_SHOTGUN)
+		{
+			// Check if there's a weapon in the third slot. If not, put the weapon there.
+			// If there is, check the fourth slot. If not, put the weapon there.
+			// If both are full, check the active weapon. If it's a rifle, put the rifle in the active slot
+			// If not put it in the third slot anyway.
+
+			// Check if there's a weapon in the third slot.
+			if (Weapon_GetSlot(2))
+			{
+				// Check if there's a weapon in the fourth slot.
+				if (Weapon_GetSlot(3))
+				{
+					// Check if the active weapon is a rifle.
+					if (pActiveWeapon->WeaponClassify() == WeaponClass_t::WEPCLASS_RIFLE)
+						iNewSlot = iActiveSlot;
+					else
+						iNewSlot = 3;
+				}
+				else
+				{
+					iNewSlot = 3;
+				}
+			}
+			else
+			{
+				iNewSlot = 2;
+			}
+		}
+		else if (pWeapon->WeaponClassify() == WeaponClass_t::WEPCLASS_HEAVY)
+		{
+			// Heavy weapon
+			iNewSlot = 4;
+		}
+
+		pWeapon->SetSlot(iNewSlot);
+		pWeapon->SetPosition(0);
+
+		NetworkStateChanged();
+
 		// This code drops existing weapons that are in the same bucket and bucket position.
 		// This doesn't really harm anything since that situation would've broken the HUD anyway.
 		// 

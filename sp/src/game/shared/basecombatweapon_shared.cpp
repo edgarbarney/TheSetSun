@@ -238,6 +238,10 @@ const unsigned char *CBaseCombatWeapon::GetEncryptionKey( void )
 //-----------------------------------------------------------------------------
 void CBaseCombatWeapon::Precache( void )
 {
+	// Let's initialise this shite
+	m_iWeaponSlot = 1;
+	m_iWeaponSlotPosition = 1;
+
 #if defined( CLIENT_DLL )
 	Assert( Q_strlen( GetClassname() ) > 0 );
 	// Msg( "Client got %s\n", GetClassname() );
@@ -556,7 +560,15 @@ int CBaseCombatWeapon::GetWeaponFlags( void ) const
 //-----------------------------------------------------------------------------
 int CBaseCombatWeapon::GetSlot( void ) const
 {
-	return GetWpnData().iSlot;
+	return m_iWeaponSlot;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseCombatWeapon::SetSlot(int slotToSet)
+{
+	m_iWeaponSlot = slotToSet;
 }
 
 //-----------------------------------------------------------------------------
@@ -564,7 +576,15 @@ int CBaseCombatWeapon::GetSlot( void ) const
 //-----------------------------------------------------------------------------
 int CBaseCombatWeapon::GetPosition( void ) const
 {
-	return GetWpnData().iPosition;
+	return m_iWeaponSlotPosition;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseCombatWeapon::SetPosition(int posToSet)
+{
+	m_iWeaponSlotPosition = posToSet;
 }
 
 //-----------------------------------------------------------------------------
@@ -3026,6 +3046,9 @@ BEGIN_PREDICTION_DATA( CBaseCombatWeapon )
 
 	DEFINE_PRED_FIELD( m_nViewModelIndex, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 
+	DEFINE_PRED_FIELD(m_iWeaponSlot, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_iWeaponSlotPosition, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
+
 	// Not networked
 
 	DEFINE_PRED_FIELD( m_flTimeWeaponIdle, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
@@ -3198,6 +3221,9 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 	DEFINE_FIELD( m_iSecondaryAmmoCount, FIELD_INTEGER ),
 
 	DEFINE_FIELD( m_nViewModelIndex, FIELD_INTEGER ),
+
+	DEFINE_FIELD(m_iWeaponSlot, FIELD_INTEGER),
+	DEFINE_FIELD(m_iWeaponSlotPosition, FIELD_INTEGER),
 
 // don't save these, init to 0 and regenerate
 //	DEFINE_FIELD( m_flNextEmptySoundTime, FIELD_TIME ),
@@ -3390,6 +3416,9 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalWeaponData )
 
 	SendPropInt( SENDINFO( m_bFlipViewModel ) ),
 
+	SendPropInt(SENDINFO(m_iWeaponSlot)),
+	SendPropInt(SENDINFO(m_iWeaponSlotPosition)),
+
 #if defined( TF_DLL )
 	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
 #endif
@@ -3403,6 +3432,9 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalWeaponData )
 	RecvPropInt( RECVINFO( m_nViewModelIndex ) ),
 
 	RecvPropBool( RECVINFO( m_bFlipViewModel ) ),
+
+	RecvPropInt(RECVINFO(m_iWeaponSlot)),
+	RecvPropInt(RECVINFO(m_iWeaponSlotPosition)),
 
 #endif
 END_NETWORK_TABLE()

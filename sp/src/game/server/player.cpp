@@ -7017,9 +7017,7 @@ bool CBasePlayer::PickupWeapon( CBaseCombatWeapon *pWeapon )
 	{
 		for (int i=0;i<MAX_WEAPONS;i++) 
 		{
-			if (m_hMyWeapons[i] &&
-				pWeapon->GetSlot() == m_hMyWeapons[i]->GetSlot() &&
-				pWeapon->GetPosition() == m_hMyWeapons[i]->GetPosition())
+			if (m_hMyWeapons[i] && pWeapon->GetClassname() == m_hMyWeapons[i]->GetClassname())
 			{
 				//Weapon_EquipAmmoOnly( pWeapon );
 
@@ -7096,10 +7094,10 @@ bool CBasePlayer::PickupWeapon( CBaseCombatWeapon *pWeapon )
 #endif
 #endif
 		}
+
 		return true;
 	}
 }
-
 
 bool CBasePlayer::RemovePlayerItem( CBaseCombatWeapon *pItem )
 {

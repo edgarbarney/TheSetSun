@@ -42,6 +42,8 @@ public:
 	void	PrimaryAttack(void);
 	void	Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator);
 
+	virtual WeaponClass_t WeaponClassify() override { return WeaponClass_t::WEPCLASS_HANDGUN; }
+
 	float	WeaponAutoAimScale() { return 0.6f; }
 
 #ifdef MAPBASE

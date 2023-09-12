@@ -410,7 +410,9 @@ public:
 	virtual bool			AllowsAutoSwitchFrom( void ) const;
 	virtual int				GetWeaponFlags( void ) const;
 	virtual int				GetSlot( void ) const;
+	virtual void			SetSlot(int slotToSet);
 	virtual int				GetPosition( void ) const;
+	virtual void			SetPosition(int slotToSet);
 	virtual char const		*GetName( void ) const;
 	virtual char const		*GetPrintName( void ) const;
 	virtual char const		*GetShootSound( int iIndex ) const;
@@ -733,6 +735,9 @@ public:
 	EHANDLE					m_hLocker;				// Who locked this weapon.
 
 	CNetworkVar( bool, m_bFlipViewModel );
+
+	CNetworkVar(int, m_iWeaponSlot);
+	CNetworkVar(int, m_iWeaponSlotPosition);
 
 #ifdef MAPBASE
 #ifdef CLIENT_DLL
