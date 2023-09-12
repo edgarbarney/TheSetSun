@@ -2371,8 +2371,6 @@ void CBaseCombatCharacter::Weapon_HandleEquip( CBaseCombatWeapon *pWeapon )
 		pWeapon->SetSlot(iNewSlot);
 		pWeapon->SetPosition(0);
 
-		NetworkStateChanged();
-
 		// This code drops existing weapons that are in the same bucket and bucket position.
 		// This doesn't really harm anything since that situation would've broken the HUD anyway.
 		// 
