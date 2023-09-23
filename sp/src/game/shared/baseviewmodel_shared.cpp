@@ -582,9 +582,9 @@ void CBaseViewModel::CalcViewModelLag( Vector& origin, QAngle& angles, QAngle& o
 	}
 
 	//FIXME: These are the old settings that caused too many exposed polys on some models
-	VectorMA( origin, -pitch * 0.035f,	forward,	origin );
-	VectorMA( origin, -pitch * 0.03f,		right,	origin );
-	VectorMA( origin, -pitch * 0.02f,		up,		origin);
+	//VectorMA( origin, -pitch * 0.035f,	forward,	origin );
+	//VectorMA( origin, -pitch * 0.03f,		right,	origin );
+	//VectorMA( origin, -pitch * 0.02f,		up,		origin);
 }
 
 //-----------------------------------------------------------------------------
