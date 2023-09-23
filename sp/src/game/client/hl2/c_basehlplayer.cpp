@@ -21,6 +21,9 @@ extern ConVar cl_forwardspeed;
 extern ConVar cl_backspeed;
 extern ConVar cl_sidespeed;
 
+extern ConVar cl_autoreload;
+extern ConVar cl_autoswitch;
+
 extern ConVar zoom_sensitivity_ratio;
 extern ConVar default_fov;
 extern ConVar sensitivity;

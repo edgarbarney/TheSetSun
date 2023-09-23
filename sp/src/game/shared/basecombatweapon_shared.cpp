@@ -1651,11 +1651,14 @@ bool CBaseCombatWeapon::ReloadOrSwitchWeapons( void )
 {
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	Assert( pOwner );
-
+	
 	m_bFireOnEmpty = false;
 
+	ConVar* pAutoReload = cvar->FindVar("cl_autoreload");
+	ConVar* pAutoSwitch = cvar->FindVar("cl_autoswitch");
+
 	// If we don't have any ammo, switch to the next best weapon
-	if ( !HasAnyAmmo() && m_flNextPrimaryAttack < gpGlobals->curtime && m_flNextSecondaryAttack < gpGlobals->curtime )
+	if (pAutoSwitch->GetBool() && !HasAnyAmmo() && m_flNextPrimaryAttack < gpGlobals->curtime && m_flNextSecondaryAttack < gpGlobals->curtime )
 	{
 		// weapon isn't useable, switch.
 #ifdef MAPBASE
@@ -1669,7 +1672,7 @@ bool CBaseCombatWeapon::ReloadOrSwitchWeapons( void )
 			return true;
 		}
 	}
-	else
+	else if (pAutoReload->GetBool())
 	{
 		// Weapon is useable. Reload if empty and weapon has waited as long as it has to after firing
 		if ( UsesClipsForAmmo1() && !AutoFiresFullClip() && 

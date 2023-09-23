@@ -125,6 +125,10 @@ ConVar cl_forwardspeed( "cl_forwardspeed", "450", FCVAR_REPLICATED | FCVAR_CHEAT
 ConVar cl_backspeed( "cl_backspeed", "450", FCVAR_REPLICATED | FCVAR_CHEAT );
 #endif // CSTRIKE_DLL
 
+// Auto-Reload Weapon
+ConVar cl_autoreload("cl_autoreload", "0", FCVAR_REPLICATED);
+ConVar cl_autoswitch("cl_autoswitch", "0", FCVAR_REPLICATED);
+
 // This is declared in the engine, too
 ConVar	sv_noclipduringpause( "sv_noclipduringpause", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "If cheats are enabled, then you can noclip with the game paused (for doing screenshots, etc.)." );
 
