@@ -13,6 +13,16 @@
 #include "prediction.h"
 #include "client_virtualreality.h"
 #include "sourcevr/isourcevirtualreality.h"
+
+// Clientside viewmodel offset
+ConVar viewmodel_offset_x("viewmodel_offset_x", "0.0", FCVAR_ARCHIVE);
+ConVar viewmodel_offset_y("viewmodel_offset_y", "0.0", FCVAR_ARCHIVE);
+ConVar viewmodel_offset_z("viewmodel_offset_z", "0.0", FCVAR_ARCHIVE);
+
+ConVar viewmodel_angleoffset_x("viewmodel_angleoffset_x", "0.0", FCVAR_ARCHIVE);
+ConVar viewmodel_angleoffset_y("viewmodel_angleoffset_y", "0.0", FCVAR_ARCHIVE);
+ConVar viewmodel_angleoffset_z("viewmodel_angleoffset_z", "0.0", FCVAR_ARCHIVE);
+
 #else
 #include "vguiscreen.h"
 #endif
@@ -428,6 +438,11 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	QAngle vmangles = eyeAngles;
 	Vector vmorigin = eyePosition;
 
+	// To use in viewmodel offset
+	Vector v_right = Vector(0);
+	Vector v_up = Vector(0);
+	Vector v_forward = Vector(0);
+
 	CBaseCombatWeapon *pWeapon = m_hWeapon.Get();
 	//Allow weapon lagging
 	if ( pWeapon != NULL )
@@ -476,6 +491,26 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 		vmangles.z = (eyeAngles.z + angAnglesDiff.z);
 	}
 #endif
+
+
+	// Viewmodel Offset
+
+	// UTIL_MakeVectors is this in Source, apparently
+	AngleVectors(vmangoriginal, &v_right, &v_up, &v_forward);
+
+	Vector vecOriginOffset =
+		(viewmodel_offset_x.GetFloat() * v_right) +
+		(viewmodel_offset_y.GetFloat() * v_forward) +
+		(viewmodel_offset_z.GetFloat() * v_up);
+
+	vmorigin += vecOriginOffset;
+
+	QAngle vecAngleOffset = QAngle(
+		viewmodel_angleoffset_x.GetFloat(),
+		viewmodel_angleoffset_y.GetFloat(),
+		viewmodel_angleoffset_z.GetFloat());
+
+	vmangles += vecAngleOffset;
 
 	SetLocalOrigin( vmorigin );
 	SetLocalAngles( vmangles );
