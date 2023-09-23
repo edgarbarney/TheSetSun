@@ -544,6 +544,11 @@ bool CBaseCombatWeapon::AllowsAutoSwitchTo( void ) const
 //-----------------------------------------------------------------------------
 bool CBaseCombatWeapon::AllowsAutoSwitchFrom( void ) const
 {
+	ConVar* pAutoSwitch = cvar->FindVar("cl_autoswitch");
+
+	if (!pAutoSwitch->GetBool())
+		return false;
+
 	return GetWpnData().bAutoSwitchFrom;
 }
 

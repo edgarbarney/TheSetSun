@@ -176,9 +176,12 @@ bool CSingleplayRules::Damage_ShouldNotBleed( int iDmgType )
 	//-----------------------------------------------------------------------------
 	bool CSingleplayRules::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon )
 	{
+		ConVar* pAutoSwitch = cvar->FindVar("cl_autoswitch");
+
 		//Must have ammo
 		if ( ( pWeapon->HasAnyAmmo() == false ) && ( pPlayer->GetAmmoCount( pWeapon->m_iPrimaryAmmoType ) <= 0 ) )
-			return false;
+			if (pAutoSwitch->GetBool())
+				return false;
 
 		//Always take a loaded gun if we have nothing else
 		if ( pPlayer->GetActiveWeapon() == NULL )

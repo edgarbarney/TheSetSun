@@ -1520,6 +1520,8 @@ void CHudWeaponSelection::PlusTypeFastWeaponSwitch( int iWeaponSlot )
 //-----------------------------------------------------------------------------
 void CHudWeaponSelection::SelectWeaponSlot( int iSlot )
 {
+	// TODO: Make weapons that are out of ammo selectable
+
 	// iSlot is one higher than it should be, since it's the number key, not the 0-based index into the weapons
 	--iSlot;
 

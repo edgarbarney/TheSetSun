@@ -3776,6 +3776,8 @@ bool CHL2_Player::Weapon_Ready( void )
 //-----------------------------------------------------------------------------
 bool CHL2_Player::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 {
+	ConVar* pAutoSwitch = cvar->FindVar("cl_autoswitch");
+
 	CBasePlayer *pPlayer = (CBasePlayer *)this;
 #if !defined( CLIENT_DLL )
 	IServerVehicle *pVehicle = pPlayer->GetVehicle();
@@ -3785,8 +3787,9 @@ bool CHL2_Player::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 	if (pVehicle && !pPlayer->UsingStandardWeaponsInVehicle())
 		return false;
 
-	if ( !pWeapon->HasAnyAmmo() && !GetAmmoCount( pWeapon->m_iPrimaryAmmoType ) )
-		return false;
+	if ( (!pWeapon->HasAnyAmmo() && !GetAmmoCount(pWeapon->m_iPrimaryAmmoType)) )
+		if (!IsPlayer() || pAutoSwitch->GetBool())
+			return false;
 
 	if ( !pWeapon->CanDeploy() )
 		return false;
