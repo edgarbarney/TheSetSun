@@ -499,15 +499,18 @@ void CWeaponUSP::ItemPostFrame( void )
 // Purpose: 
 // Output : int
 //-----------------------------------------------------------------------------
-Activity CWeaponUSP::GetPrimaryAttackActivity( void )
+Activity CWeaponUSP::GetPrimaryAttackActivity(void)
 {
-	if ( m_nNumShotsFired < 1 )
+	if (Clip1() <= 1)
+		return ACT_VM_PRIMARYATTACK_EMPTY;
+
+	if (m_nNumShotsFired < 1)
 		return ACT_VM_PRIMARYATTACK;
 
-	if ( m_nNumShotsFired < 2 )
+	if (m_nNumShotsFired < 2)
 		return ACT_VM_RECOIL1;
 
-	if ( m_nNumShotsFired < 3 )
+	if (m_nNumShotsFired < 3)
 		return ACT_VM_RECOIL2;
 
 	return ACT_VM_RECOIL3;

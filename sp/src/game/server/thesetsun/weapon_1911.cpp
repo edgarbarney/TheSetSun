@@ -48,6 +48,7 @@ public:
 
 #ifdef MAPBASE
 	int		CapabilitiesGet(void) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
+	Activity	GetPrimaryAttackActivity(void);
 
 	virtual int	GetMinBurst() { return 1; }
 	virtual int	GetMaxBurst() { return 1; }
@@ -380,5 +381,32 @@ void CWeapon1911::PrimaryAttack(void)
 	{
 		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Output : int
+//-----------------------------------------------------------------------------
+Activity CWeapon1911::GetPrimaryAttackActivity(void)
+{
+	if (Clip1() <= 1)
+		return ACT_VM_PRIMARYATTACK_EMPTY;
+
+	switch (RandomInt(1,4))
+	{
+	case 1:
+	default:
+		return ACT_VM_PRIMARYATTACK;
+		break;
+	case 2:
+		return ACT_VM_RECOIL1;
+		break;
+	case 3:
+		return ACT_VM_RECOIL2;
+		break;
+	case 4:
+		return ACT_VM_RECOIL3;
+		break;
 	}
 }
