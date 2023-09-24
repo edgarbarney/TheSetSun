@@ -102,6 +102,9 @@ CBaseCombatWeapon::CBaseCombatWeapon()
 	m_nCritChecks = 1;
 	m_nCritSeedRequests = 0;
 #endif // TF
+
+	m_vecADSOrigin.GetForModify() = Vector(0);
+	m_angADSAngles.GetForModify() = QAngle(0, 0, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -3462,6 +3465,8 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 #ifdef MAPBASE
 	SendPropInt( SENDINFO(m_spawnflags), 8, SPROP_UNSIGNED ),
 #endif
+	SendPropVector(SENDINFO(m_vecADSOrigin), -1, SPROP_COORD),
+	SendPropQAngles(SENDINFO(m_angADSAngles), 13),
 
 #else
 	RecvPropDataTable("LocalWeaponData", 0, 0, &REFERENCE_RECV_TABLE(DT_LocalWeaponData)),
@@ -3477,6 +3482,8 @@ BEGIN_NETWORK_TABLE(CBaseCombatWeapon, DT_BaseCombatWeapon)
 #ifdef MAPBASE
 	RecvPropInt( RECVINFO( m_spawnflags ) ),
 #endif
+	RecvPropVector(RECVINFO(m_vecADSOrigin)),
+	RecvPropQAngles(RECVINFO(m_angADSAngles)),
 
 #endif
 END_NETWORK_TABLE()

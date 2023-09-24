@@ -255,6 +255,9 @@ CWeapon1911::CWeapon1911(void)
 	m_fMinRange2 = 24;
 	m_fMaxRange2 = 200;
 #endif
+
+	m_vecADSOrigin.GetForModify() = Vector(-40.0f, 12.75f, -18.1f);
+	m_angADSAngles.GetForModify() = QAngle(-0.5f, -2.0f, 0);
 }
 
 //-----------------------------------------------------------------------------

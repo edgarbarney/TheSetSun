@@ -443,10 +443,17 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	Vector v_up = Vector(0);
 	Vector v_forward = Vector(0);
 
+	Vector vecADSOriginOffset = Vector(0);
+	QAngle vecADSAnglesOffset = QAngle(0,0,0);
+
 	CBaseCombatWeapon *pWeapon = m_hWeapon.Get();
 	//Allow weapon lagging
 	if ( pWeapon != NULL )
 	{
+
+		vecADSOriginOffset = pWeapon->m_vecADSOrigin.Get();
+		vecADSAnglesOffset = pWeapon->m_angADSAngles.Get();
+
 #if defined( CLIENT_DLL )
 		if ( !prediction->InPrediction() )
 #endif
@@ -499,16 +506,25 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	AngleVectors(vmangoriginal, &v_right, &v_up, &v_forward);
 
 	Vector vecOriginOffset =
+		// Console offset
 		(viewmodel_offset_x.GetFloat() * v_right) +
 		(viewmodel_offset_y.GetFloat() * v_forward) +
-		(viewmodel_offset_z.GetFloat() * v_up);
-
+		(viewmodel_offset_z.GetFloat() * v_up) +
+		// ADS offset
+		(vecADSOriginOffset.x * v_right) +
+		(vecADSOriginOffset.y * v_forward) +
+		(vecADSOriginOffset.z * v_up);
+		
 	vmorigin += vecOriginOffset;
 
+	// Console offset
 	QAngle vecAngleOffset = QAngle(
 		viewmodel_angleoffset_x.GetFloat(),
 		viewmodel_angleoffset_y.GetFloat(),
 		viewmodel_angleoffset_z.GetFloat());
+
+	// ADS offset
+	vecAngleOffset += vecADSAnglesOffset;
 
 	vmangles += vecAngleOffset;
 

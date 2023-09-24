@@ -689,6 +689,14 @@ public:
 #ifdef MAPBASE
 	CNetworkVar( int, m_iDroppedModelIndex );
 #endif
+
+	// Origin for the weapon when in ADS mode
+	// TODO: Should be clientside only???
+	CNetworkVector(m_vecADSOrigin);
+	// Angles for the weapon when in ADS mode
+	// TODO: Should be clientside only???
+	CNetworkQAngle(m_angADSAngles);
+
 	// Sounds
 	float					m_flNextEmptySoundTime;				// delay on empty sound playing
 
