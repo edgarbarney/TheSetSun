@@ -446,6 +446,11 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 	Vector vecADSOriginOffset = Vector(0);
 	QAngle vecADSAnglesOffset = QAngle(0,0,0);
 
+	Quaternion qOffset;
+	Quaternion qADS;
+	Quaternion qView;
+	Quaternion qResult;
+
 	CBaseCombatWeapon *pWeapon = m_hWeapon.Get();
 	//Allow weapon lagging
 	if ( pWeapon != NULL )
@@ -524,9 +529,14 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 		viewmodel_angleoffset_z.GetFloat());
 
 	// ADS offset
-	vecAngleOffset += vecADSAnglesOffset;
+	AngleQuaternion(vecAngleOffset, qOffset);
+	AngleQuaternion(vecADSAnglesOffset, qADS);
+	AngleQuaternion(vmangles, qView);
 
-	vmangles += vecAngleOffset;
+	QuaternionMult(qView, qOffset, qResult);
+	QuaternionMult(qView, qADS, qResult);
+
+	QuaternionAngles(qResult, vmangles);
 
 	SetLocalOrigin( vmorigin );
 	SetLocalAngles( vmangles );
