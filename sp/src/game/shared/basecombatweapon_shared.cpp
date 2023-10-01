@@ -146,7 +146,7 @@ void CBaseCombatWeapon::CalculateADS()
 	static const auto defaultAng = QAngle(0, 0, 0);
 
 	static float lastTime = gpGlobals->curtime;
-	static float curAdsTime = gpGlobals->curtime;
+	static float curAdsTime = 0.0f;
 	static float timeDelta = 0.0f;
 
 	timeDelta = gpGlobals->curtime - lastTime;
