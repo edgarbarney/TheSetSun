@@ -139,6 +139,47 @@ void CBaseCombatWeapon::Activate( void )
 #endif
 
 }
+
+void CBaseCombatWeapon::CalculateADS()
+{
+	static const auto defaultPos = Vector(0);
+	static const auto defaultAng = QAngle(0, 0, 0);
+
+	static float lastTime = gpGlobals->curtime;
+	static float curAdsTime = gpGlobals->curtime;
+	static float timeDelta = 0.0f;
+
+	timeDelta = gpGlobals->curtime - lastTime;
+	lastTime = gpGlobals->curtime;
+
+	if (m_bIsADS)
+	{
+		curAdsTime += timeDelta * 5.0f;
+
+		m_flCurrentBobScale = GetWpnData().m_flADSBobScale;
+		m_flCurrentSwayScale = GetWpnData().m_flADSSwayScale;
+		m_flCurrentSwaySpeedScale = GetWpnData().m_flADSSwaySpeedScale;
+	}
+	else
+	{
+		curAdsTime -= timeDelta * 5.0f;
+
+		m_flCurrentBobScale = GetWpnData().m_flBobScale;
+		m_flCurrentSwayScale = GetWpnData().m_flSwayScale;
+		m_flCurrentSwaySpeedScale = GetWpnData().m_flSwaySpeedScale;
+	}
+
+	if (curAdsTime > 1.0f)
+		curAdsTime = 1.0f;
+
+	if (curAdsTime < 0.0f)
+		curAdsTime = 0.0f;
+
+	m_vecADSOrigin.GetForModify() = Lerp(curAdsTime, defaultPos, GetWpnData().m_vecADSPosOffset);
+	m_angADSAngles.GetForModify() = Lerp(curAdsTime, defaultAng, GetWpnData().m_angADSAngOffset);
+
+}
+
 void CBaseCombatWeapon::GiveDefaultAmmo( void )
 {
 	// If I use clips, set my clips to the default
@@ -244,6 +285,11 @@ void CBaseCombatWeapon::Precache( void )
 	// Let's initialise this shite
 	m_iWeaponSlot = 1;
 	m_iWeaponSlotPosition = 1;
+
+	m_flCurrentViewmodelFOV = GetWpnData().m_flViewmodelFOV;
+	m_flCurrentBobScale = GetWpnData().m_flBobScale;
+	m_flCurrentSwayScale = GetWpnData().m_flSwayScale;
+	m_flCurrentSwaySpeedScale = GetWpnData().m_flSwaySpeedScale;
 
 #if defined( CLIENT_DLL )
 	Assert( Q_strlen( GetClassname() ) > 0 );
@@ -487,22 +533,22 @@ bool CBaseCombatWeapon::IsMeleeWeapon() const
 #ifdef MAPBASE
 float CBaseCombatWeapon::GetViewmodelFOVOverride() const
 {
-	return GetWpnData().m_flViewmodelFOV;
+	return m_flCurrentViewmodelFOV;
 }
 
 float CBaseCombatWeapon::GetBobScale() const
 {
-	return GetWpnData().m_flBobScale;
+	return m_flCurrentBobScale;
 }
 
 float CBaseCombatWeapon::GetSwayScale() const
 {
-	return GetWpnData().m_flSwayScale;
+	return m_flCurrentSwayScale;
 }
 
 float CBaseCombatWeapon::GetSwaySpeedScale() const
 {
-	return GetWpnData().m_flSwaySpeedScale;
+	return m_flCurrentSwaySpeedScale;
 }
 
 const char *CBaseCombatWeapon::GetDroppedModel() const
@@ -2131,6 +2177,17 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 
 	bool bFired = false;
 
+	CalculateADS();
+
+	if (pOwner->m_nButtons & IN_ADS)
+	{
+		m_bIsADS = true;
+	}
+	else
+	{
+		m_bIsADS = false;
+	}
+
 	// Secondary attack has priority
 	if ((pOwner->m_nButtons & IN_ATTACK2) && (m_flNextSecondaryAttack <= gpGlobals->curtime))
 	{
@@ -2552,7 +2609,7 @@ void CBaseCombatWeapon::WeaponIdle( void )
 	//Idle again if we've finished
 	if ( HasWeaponIdleTimeElapsed() )
 	{
-		SendWeaponAnim( ACT_VM_IDLE );
+		SendWeaponAnim((m_iClip1 < 1) ? ACT_VM_IDLE_EMPTY : ACT_VM_IDLE);
 	}
 }
 
@@ -3060,6 +3117,11 @@ BEGIN_PREDICTION_DATA( CBaseCombatWeapon )
 	DEFINE_PRED_FIELD(m_iWeaponSlot, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD(m_iWeaponSlotPosition, FIELD_INTEGER, FTYPEDESC_INSENDTABLE),
 
+	DEFINE_PRED_FIELD(m_flCurrentViewmodelFOV, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_flCurrentBobScale, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_flCurrentSwayScale, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+	DEFINE_PRED_FIELD(m_flCurrentSwaySpeedScale, FIELD_FLOAT, FTYPEDESC_INSENDTABLE),
+
 	// Not networked
 
 	DEFINE_PRED_FIELD( m_flTimeWeaponIdle, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
@@ -3235,6 +3297,11 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 
 	DEFINE_FIELD(m_iWeaponSlot, FIELD_INTEGER),
 	DEFINE_FIELD(m_iWeaponSlotPosition, FIELD_INTEGER),
+
+	DEFINE_FIELD(m_flCurrentViewmodelFOV, FIELD_FLOAT),
+	DEFINE_FIELD(m_flCurrentBobScale, FIELD_FLOAT),
+	DEFINE_FIELD(m_flCurrentSwayScale, FIELD_FLOAT),
+	DEFINE_FIELD(m_flCurrentSwaySpeedScale, FIELD_FLOAT),
 
 // don't save these, init to 0 and regenerate
 //	DEFINE_FIELD( m_flNextEmptySoundTime, FIELD_TIME ),
@@ -3430,6 +3497,13 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalWeaponData )
 	SendPropInt(SENDINFO(m_iWeaponSlot)),
 	SendPropInt(SENDINFO(m_iWeaponSlotPosition)),
 
+	SendPropBool(SENDINFO(m_bIsADS)),
+
+	SendPropInt(SENDINFO(m_flCurrentViewmodelFOV)),
+	SendPropInt(SENDINFO(m_flCurrentBobScale)),
+	SendPropInt(SENDINFO(m_flCurrentSwayScale)),
+	SendPropInt(SENDINFO(m_flCurrentSwaySpeedScale)),
+
 #if defined( TF_DLL )
 	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
 #endif
@@ -3446,6 +3520,13 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalWeaponData )
 
 	RecvPropInt(RECVINFO(m_iWeaponSlot)),
 	RecvPropInt(RECVINFO(m_iWeaponSlotPosition)),
+
+	RecvPropBool(RECVINFO(m_bIsADS)),
+
+	RecvPropInt(RECVINFO(m_flCurrentViewmodelFOV)),
+	RecvPropInt(RECVINFO(m_flCurrentBobScale)),
+	RecvPropInt(RECVINFO(m_flCurrentSwayScale)),
+	RecvPropInt(RECVINFO(m_flCurrentSwaySpeedScale)),
 
 #endif
 END_NETWORK_TABLE()

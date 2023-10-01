@@ -2867,6 +2867,8 @@ bool CScriptConvarAccessor::Init()
 	AddOverridable( "+showscores" );
 	AddOverridable( "+voicerecord" );
 
+	AddOverridable("+ads");
+
 	AddOverridable( "-attack" );
 	AddOverridable( "-attack2" );
 	AddOverridable( "-attack3" );
@@ -2888,6 +2890,8 @@ bool CScriptConvarAccessor::Init()
 	AddOverridable( "-grenade2" );
 	AddOverridable( "-showscores" );
 	AddOverridable( "-voicerecord" );
+
+	AddOverridable("-ads");
 
 	AddOverridable( "toggle_duck" );
 	AddOverridable( "impulse" );

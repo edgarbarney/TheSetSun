@@ -204,12 +204,12 @@ void CBaseHLCombatWeapon::WeaponIdle( void )
 		if ( GetActivity() != ACT_VM_IDLE_LOWERED && GetActivity() != ACT_VM_IDLE_TO_LOWERED 
 			 && GetActivity() != ACT_TRANSITION )
 		{
-			SendWeaponAnim( ACT_VM_IDLE_LOWERED );
+			SendWeaponAnim( ACT_VM_IDLE_LOWERED ); // (m_iClip1 < 1) ? ACT_VM_IDLE_EMPTY : ACT_VM_IDLE
 		}
 		else if ( HasWeaponIdleTimeElapsed() )
 		{
 			// Keep idling low
-			SendWeaponAnim( ACT_VM_IDLE_LOWERED );
+			SendWeaponAnim( ACT_VM_IDLE_LOWERED ); // (m_iClip1 < 1) ? ACT_VM_IDLE_EMPTY : ACT_VM_IDLE
 		}
 	}
 	else
@@ -217,11 +217,11 @@ void CBaseHLCombatWeapon::WeaponIdle( void )
 		// See if we need to raise immediately
 		if ( m_flRaiseTime < gpGlobals->curtime && GetActivity() == ACT_VM_IDLE_LOWERED ) 
 		{
-			SendWeaponAnim( ACT_VM_IDLE );
+			SendWeaponAnim((m_iClip1 < 1) ? ACT_VM_IDLE_EMPTY : ACT_VM_IDLE);
 		}
 		else if ( HasWeaponIdleTimeElapsed() ) 
 		{
-			SendWeaponAnim( ACT_VM_IDLE );
+			SendWeaponAnim((m_iClip1 < 1) ? ACT_VM_IDLE_EMPTY : ACT_VM_IDLE);
 		}
 	}
 }

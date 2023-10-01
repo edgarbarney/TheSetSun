@@ -463,6 +463,8 @@ public:
 
 	virtual bool ShouldUseLargeViewModelVROverride() { return false; }
 
+	virtual void CalculateADS();
+
 #ifdef MAPBASE
 	// Gets the weapon script name to load.
 	virtual const char*		GetWeaponScriptName() { return GetClassname(); }
@@ -746,6 +748,16 @@ public:
 
 	CNetworkVar(int, m_iWeaponSlot);
 	CNetworkVar(int, m_iWeaponSlotPosition);
+
+	// ADS Vars
+
+	// Is the weapon currently in ADS mode?
+	CNetworkVar(bool, m_bIsADS);
+
+	CNetworkVar(float, m_flCurrentViewmodelFOV);
+	CNetworkVar(float, m_flCurrentBobScale);
+	CNetworkVar(float, m_flCurrentSwayScale);
+	CNetworkVar(float, m_flCurrentSwaySpeedScale);
 
 #ifdef MAPBASE
 #ifdef CLIENT_DLL

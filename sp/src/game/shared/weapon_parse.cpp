@@ -406,6 +406,11 @@ FileWeaponInfo_t::FileWeaponInfo_t()
 	m_flBobScale = 1.0f;
 	m_flSwayScale = 1.0f;
 	m_flSwaySpeedScale = 1.0f;
+	m_flADSViewmodelFOV = 0.0f;
+	m_flADSBobScale = 1.0f;
+	m_flADSSwayScale = 1.0f;
+	m_flADSSwaySpeedScale = 1.0f;
+
 	szDroppedModel[0] = 0;
 	m_bUsesHands = false;
 #endif
@@ -479,6 +484,22 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	m_flBobScale = pKeyValuesData->GetFloat( "bob_scale", 1.0f );
 	m_flSwayScale = pKeyValuesData->GetFloat( "sway_scale", 1.0f );
 	m_flSwaySpeedScale = pKeyValuesData->GetFloat( "sway_speed_scale", 1.0f );
+	m_flADSViewmodelFOV = pKeyValuesData->GetFloat("viewmodel_fov_ads", 0.0f);
+	m_flADSBobScale = pKeyValuesData->GetFloat("bob_scale_ads", 1.0f);
+	m_flADSSwayScale = pKeyValuesData->GetFloat("sway_scale_ads", 1.0f);
+	m_flADSSwaySpeedScale = pKeyValuesData->GetFloat("sway_speed_scale_ads", 1.0f); 
+
+	m_vecADSPosOffset = Vector(
+		pKeyValuesData->GetFloat("adspos_x", 0.0f),
+		pKeyValuesData->GetFloat("adspos_y", 0.0f),
+		pKeyValuesData->GetFloat("adspos_z", 0.0f)
+	);
+
+	m_angADSAngOffset = QAngle(
+		pKeyValuesData->GetFloat("adsang_x", 0.0f),
+		pKeyValuesData->GetFloat("adsang_y", 0.0f),
+		pKeyValuesData->GetFloat("adsang_z", 0.0f)
+	);
 
 	Q_strncpy( szDroppedModel, pKeyValuesData->GetString( "droppedmodel" ), MAX_WEAPON_STRING );
 

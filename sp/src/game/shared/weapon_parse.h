@@ -122,6 +122,14 @@ public:
 	float					m_flSwayScale;
 	float					m_flSwaySpeedScale;
 
+	float					m_flADSViewmodelFOV;
+	float					m_flADSBobScale;
+	float					m_flADSSwayScale;
+	float					m_flADSSwaySpeedScale;
+
+	Vector					m_vecADSPosOffset;
+	QAngle					m_angADSAngOffset;
+
 	char					szDroppedModel[MAX_WEAPON_STRING];		// Model of this weapon when dropped on the ground
 
 	bool					m_bUsesHands;

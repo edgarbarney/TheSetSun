@@ -52,6 +52,7 @@ BEGIN_SCRIPTENUM( IN, "Button mask bindings" )
 	DEFINE_ENUMCONST_NAMED( IN_GRENADE1, "GRENADE1", "Button for +grenade1" )
 	DEFINE_ENUMCONST_NAMED( IN_GRENADE2, "GRENADE2", "Button for +grenade2" )
 	DEFINE_ENUMCONST_NAMED( IN_ATTACK3, "ATTACK3", "Button for +attack3" )
+	DEFINE_ENUMCONST_NAMED( IN_ADS, "ADS", "Button for +ads")
 
 END_SCRIPTENUM();
 

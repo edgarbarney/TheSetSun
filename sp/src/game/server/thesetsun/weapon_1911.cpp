@@ -256,8 +256,8 @@ CWeapon1911::CWeapon1911(void)
 	m_fMaxRange2 = 200;
 #endif
 
-	m_vecADSOrigin.GetForModify() = Vector(-40.0f, 12.75f, -18.1f);
-	m_angADSAngles.GetForModify() = QAngle(-0.5f, -2.0f, 0);
+	m_vecADSOrigin.GetForModify() = Vector(0.0f, 0.0f, 0.0f);
+	m_angADSAngles.GetForModify() = QAngle(0.0f, 0.0f, 0.0f);
 }
 
 //-----------------------------------------------------------------------------
@@ -352,7 +352,7 @@ void CWeapon1911::PrimaryAttack(void)
 	WeaponSound(SINGLE);
 	pPlayer->DoMuzzleFlash();
 
-	SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+	SendWeaponAnim(GetPrimaryAttackActivity());
 	pPlayer->SetAnimation(PLAYER_ATTACK1);
 
 	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
