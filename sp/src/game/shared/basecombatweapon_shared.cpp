@@ -155,18 +155,10 @@ void CBaseCombatWeapon::CalculateADS()
 	if (m_bIsADS)
 	{
 		curAdsTime += timeDelta * 5.0f;
-
-		m_flCurrentBobScale = GetWpnData().m_flADSBobScale;
-		m_flCurrentSwayScale = GetWpnData().m_flADSSwayScale;
-		m_flCurrentSwaySpeedScale = GetWpnData().m_flADSSwaySpeedScale;
 	}
 	else
 	{
 		curAdsTime -= timeDelta * 5.0f;
-
-		m_flCurrentBobScale = GetWpnData().m_flBobScale;
-		m_flCurrentSwayScale = GetWpnData().m_flSwayScale;
-		m_flCurrentSwaySpeedScale = GetWpnData().m_flSwaySpeedScale;
 	}
 
 	if (curAdsTime > 1.0f)
@@ -177,6 +169,9 @@ void CBaseCombatWeapon::CalculateADS()
 
 	m_vecADSOrigin.GetForModify() = Lerp(curAdsTime, defaultPos, GetWpnData().m_vecADSPosOffset);
 	m_angADSAngles.GetForModify() = Lerp(curAdsTime, defaultAng, GetWpnData().m_angADSAngOffset);
+	m_flCurrentBobScale = Lerp(curAdsTime, GetWpnData().m_flBobScale, GetWpnData().m_flADSBobScale);
+	m_flCurrentSwayScale = Lerp(curAdsTime, GetWpnData().m_flSwayScale, GetWpnData().m_flADSSwayScale);
+	m_flCurrentSwaySpeedScale = Lerp(curAdsTime, GetWpnData().m_flSwaySpeedScale, GetWpnData().m_flADSSwaySpeedScale);
 
 }
 
