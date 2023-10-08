@@ -333,6 +333,13 @@ public:
 	virtual void			PrimaryAttack( void );						// do "+ATTACK"
 	virtual void			SecondaryAttack( void ) { return; }			// do "+ATTACK2"
 
+	virtual void			MeleeAttack() { return; }					// do "+MELEE"
+
+	// Melee Impact visuals (TODO: Encapsulate)
+
+	virtual	void	MeleeImpactEffect(trace_t& trace);
+	bool			MeleeImpactWater(const Vector& start, const Vector& end);
+
 	// Firing animations
 	virtual Activity		GetPrimaryAttackActivity( void );
 	virtual Activity		GetSecondaryAttackActivity( void );
@@ -508,6 +515,9 @@ public:
 	void				SetNextPrimaryAttack( float flVal ) { m_flNextPrimaryAttack = flVal; }
 	float				NextSecondaryAttack() { return m_flNextSecondaryAttack; }
 	void				SetNextSecondaryAttack( float flVal ) { m_flNextSecondaryAttack = flVal; }
+
+	float				NextMeleeAttack() { return m_flNextMeleeAttack; }
+	void				SetNextMeleeAttack(float flVal) { m_flNextMeleeAttack = flVal; }
 #endif
 
 public:
@@ -681,6 +691,12 @@ public:
 	CNetworkVar( float, m_flNextPrimaryAttack );						// soonest time ItemPostFrame will call PrimaryAttack
 	CNetworkVar( float, m_flNextSecondaryAttack );					// soonest time ItemPostFrame will call SecondaryAttack
 	CNetworkVar( float, m_flTimeWeaponIdle );							// soonest time ItemPostFrame will call WeaponIdle
+
+	CNetworkVar(float, m_flNextMeleeAttack);						// soonest time ItemPostFrame will call MeleeAttack
+	CNetworkVar(bool, m_bDisableMelee);								// disable melee attack for this weapon. 
+																	// This is actually not needed because of how source weapons are designed
+																	// But added anyway as a safeguard for future implementations.
+
 	// Weapon state
 	bool					m_bInReload;			// Are we in the middle of a reload;
 	bool					m_bFireOnEmpty;			// True when the gun is empty and the player is still holding down the attack key(s)

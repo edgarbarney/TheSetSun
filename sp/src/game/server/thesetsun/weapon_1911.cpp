@@ -18,6 +18,7 @@
 #include "vstdlib/random.h"
 #include "engine/IEngineSound.h"
 #include "te_effect_dispatch.h"
+#include "rumble_shared.h"
 #include "gamestats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -40,6 +41,9 @@ public:
 	CWeapon1911(void);
 
 	void	PrimaryAttack(void);
+
+	void	MeleeAttack();
+
 	void	Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator);
 
 	virtual WeaponClass_t WeaponClassify() override { return WeaponClass_t::WEPCLASS_HANDGUN; }
@@ -357,6 +361,7 @@ void CWeapon1911::PrimaryAttack(void)
 
 	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
 	m_flNextSecondaryAttack = gpGlobals->curtime + 0.2f;
+	m_flNextMeleeAttack = gpGlobals->curtime + 0.2f;
 
 	m_iClip1--;
 
@@ -385,6 +390,160 @@ void CWeapon1911::PrimaryAttack(void)
 		// HEV suit - indicate out of ammo condition
 		pPlayer->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
 	}
+}
+
+// Most of this is copied from crowbar
+void CWeapon1911::MeleeAttack()
+{
+	// TODO: MOVE THESE VARS TO SCRIPT FILES OR SOMETHING
+	constexpr int MELEE_HULL_DIM = 6;
+	constexpr int MELEE_RANGE = 75.0f;
+	const Vector g_bludgeonMins(-MELEE_HULL_DIM, -MELEE_HULL_DIM, -MELEE_HULL_DIM);
+	const Vector g_bludgeonMaxs(MELEE_HULL_DIM, MELEE_HULL_DIM, MELEE_HULL_DIM);
+
+	trace_t traceHit;
+
+	// Try a ray
+	CBasePlayer* pOwner = ToBasePlayer(GetOwner());
+	if (!pOwner)
+		return;
+
+	pOwner->RumbleEffect(RUMBLE_CROWBAR_SWING, 0, RUMBLE_FLAG_RESTART);
+
+	Vector swingStart = pOwner->Weapon_ShootPosition();
+	Vector forward;
+
+	forward = pOwner->GetAutoaimVector(AUTOAIM_SCALE_DEFAULT, MELEE_RANGE);
+
+	Vector swingEnd = swingStart + forward * MELEE_RANGE;
+	UTIL_TraceLine(swingStart, swingEnd, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit);
+	Activity nHitActivity = (m_iClip1 < 1) ? ACT_VM_MELEEHIT_EMPTY : ACT_VM_MELEEHIT;
+
+	// Like bullets, bludgeon traces have to trace against triggers.
+	CTakeDamageInfo triggerInfo(GetOwner(), GetOwner(), cvar->FindVar("sk_plr_dmg_crowbar")->GetFloat(), DMG_CLUB);
+	triggerInfo.SetDamagePosition(traceHit.startpos);
+	triggerInfo.SetDamageForce(forward);
+	TraceAttackToTriggers(triggerInfo, traceHit.startpos, traceHit.endpos, forward);
+
+	if (traceHit.fraction == 1.0)
+	{
+		float bludgeonHullRadius = 1.732f * MELEE_HULL_DIM;  // hull is +/- 16, so use cuberoot of 2 to determine how big the hull is from center to the corner point
+
+		// Back off by hull "radius"
+		swingEnd -= forward * bludgeonHullRadius;
+
+		UTIL_TraceHull(swingStart, swingEnd, g_bludgeonMins, g_bludgeonMaxs, MASK_SHOT_HULL, pOwner, COLLISION_GROUP_NONE, &traceHit);
+		if (traceHit.fraction < 1.0 && traceHit.m_pEnt)
+		{
+			Vector vecToTarget = traceHit.m_pEnt->GetAbsOrigin() - swingStart;
+			VectorNormalize(vecToTarget);
+
+			float dot = vecToTarget.Dot(forward);
+
+			// YWB:  Make sure they are sort of facing the guy at least...
+			if (dot < 0.70721f)
+			{
+				// Force amiss
+				traceHit.fraction = 1.0f;
+			}
+			else
+			{
+				nHitActivity = (m_iClip1 < 1) ? ACT_VM_MELEEHIT_EMPTY : ACT_VM_MELEEHIT;
+			}
+		}
+	}
+
+	m_iMeleeAttacks++;
+
+	//gamestats->Event_WeaponFired(pOwner, !bIsSecondary, GetClassname());
+
+	// -------------------------
+	//	Miss
+	// -------------------------
+	if (traceHit.fraction == 1.0f)
+	{
+		nHitActivity = (m_iClip1 < 1) ? ACT_VM_MELEEMISS_EMPTY : ACT_VM_MELEEMISS;
+
+		// We want to test the first swing again
+		Vector testEnd = swingStart + forward * MELEE_RANGE;
+
+		// Sound has been moved here since we're using the other melee sounds now
+		WeaponSound(SINGLE);
+
+		// See if we happened to hit water
+		MeleeImpactWater(swingStart, testEnd);
+	}
+	else
+	{
+		// Other melee sounds
+		if (traceHit.m_pEnt && traceHit.m_pEnt->IsWorld())
+			WeaponSound(MELEE_HIT_WORLD);
+		else if (traceHit.m_pEnt && !traceHit.m_pEnt->PassesDamageFilter(triggerInfo))
+			WeaponSound(MELEE_MISS);
+		else
+			WeaponSound(MELEE_HIT);
+
+		// =================
+		// START HIT
+		// =================
+
+		AddViewKick();
+
+		//Make sound for the AI
+		CSoundEnt::InsertSound(SOUND_BULLET_IMPACT, traceHit.endpos, 400, 0.2f, pOwner);
+
+		// This isn't great, but it's something for when the crowbar hits.
+		pOwner->RumbleEffect(RUMBLE_AR2, 0, RUMBLE_FLAG_RESTART);
+
+		CBaseEntity* pHitEntity = traceHit.m_pEnt;
+
+		//Apply damage to a hit target
+		if (pHitEntity != NULL)
+		{
+			Vector hitDirection;
+			pOwner->EyeVectors(&hitDirection, NULL, NULL);
+			VectorNormalize(hitDirection);
+
+			CTakeDamageInfo info(GetOwner(), GetOwner(), cvar->FindVar("sk_plr_dmg_crowbar")->GetFloat(), DMG_CLUB);
+
+			if (pOwner && pHitEntity->IsNPC())
+			{
+				// If bonking an NPC, adjust damage.
+				info.AdjustPlayerDamageInflictedForSkillLevel();
+			}
+
+			CalculateMeleeDamageForce(&info, hitDirection, traceHit.endpos);
+
+			pHitEntity->DispatchTraceAttack(info, hitDirection, &traceHit);
+			ApplyMultiDamage();
+
+			// Now hit all triggers along the ray that... 
+			TraceAttackToTriggers(info, traceHit.startpos, traceHit.endpos, hitDirection);
+
+			if (ToBaseCombatCharacter(pHitEntity))
+			{
+				gamestats->Event_WeaponHit(pOwner, false, GetClassname(), info);
+			}
+		}
+
+		// Apply an impact effect
+		MeleeImpactEffect(traceHit);
+		
+		// =================
+		// END HIT
+		// =================
+	}
+
+	// Send the anim
+	SendWeaponAnim(nHitActivity);
+
+	//Setup our next attack times
+	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2f;
+	m_flNextSecondaryAttack = gpGlobals->curtime + 0.2f;
+	m_flNextMeleeAttack = gpGlobals->curtime + 0.2f;
+
+	pOwner->SetAnimation(PLAYER_ATTACK1);
+
 }
 
 //-----------------------------------------------------------------------------

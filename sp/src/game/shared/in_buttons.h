@@ -43,6 +43,7 @@
 #define IN_GRENADE2		(1 << 24)	// grenade 2
 #define	IN_ATTACK3		(1 << 25)
 #define	IN_ADS			(1 << 26)	// Aiming down sights
+#define	IN_MELEE		(1 << 27)	// Melee
 
 #ifdef VGUI_SCREEN_FIX
 #define IN_VALIDVGUIINPUT		    (1 << 23) //bitflag for vgui fix

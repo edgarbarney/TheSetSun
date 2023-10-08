@@ -66,6 +66,7 @@ void CopySoundNameWithModifierToken( char *pchDest, const char *pchSource, int n
 #define SF_PLAYER_HIDE_SQUAD_HUD	(1 << 17)
 #define SF_PLAYER_SUPPRESS_FIRING	(1 << 18)
 #endif
+#define SF_PLAYER_SUPPRESS_MELEE	(1 << 19)
 
 // Shared header file for players
 #if defined( CLIENT_DLL )

@@ -56,6 +56,8 @@ public:
 	int				m_iPrimaryAttacks;		// # of primary attacks performed with this weapon
 	int				m_iSecondaryAttacks;	// # of secondary attacks performed with this weapon
 
+	int				m_iMeleeAttacks;		// # of melee attacks performed with this weapon
+
 protected:
 
 	bool			m_bLowered;			// Whether the viewmodel is raised or lowered

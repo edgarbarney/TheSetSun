@@ -40,6 +40,8 @@ BEGIN_DATADESC( CBaseHLCombatWeapon )
 	DEFINE_FIELD( m_iPrimaryAttacks,	FIELD_INTEGER ),
 	DEFINE_FIELD( m_iSecondaryAttacks,	FIELD_INTEGER ),
 
+	DEFINE_FIELD(m_iMeleeAttacks, FIELD_INTEGER),
+
 END_DATADESC()
 
 #endif

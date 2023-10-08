@@ -32,6 +32,8 @@
 #include "fmtstr.h"
 #include "gameweaponmanager.h"
 
+#include "te_effect_dispatch.h"
+
 #ifdef HL2MP
 	#include "hl2mp_gamerules.h"
 #endif
@@ -138,6 +140,64 @@ void CBaseCombatWeapon::Activate( void )
 	}
 #endif
 
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : &traceHit - 
+//-----------------------------------------------------------------------------
+bool CBaseCombatWeapon::MeleeImpactWater(const Vector& start, const Vector& end)
+{
+#ifndef CLIENT_DLL
+	//FIXME: This doesn't handle the case of trying to splash while being underwater, but that's not going to look good
+	//		 right now anyway...
+
+	// We must start outside the water
+	if (UTIL_PointContents(start) & (CONTENTS_WATER | CONTENTS_SLIME))
+		return false;
+
+	// We must end inside of water
+	if (!(UTIL_PointContents(end) & (CONTENTS_WATER | CONTENTS_SLIME)))
+		return false;
+
+	trace_t	waterTrace;
+
+	UTIL_TraceLine(start, end, (CONTENTS_WATER | CONTENTS_SLIME), GetOwner(), COLLISION_GROUP_NONE, &waterTrace);
+
+	if (waterTrace.fraction < 1.0f)
+	{
+		CEffectData	data;
+
+		data.m_fFlags = 0;
+		data.m_vOrigin = waterTrace.endpos;
+		data.m_vNormal = waterTrace.plane.normal;
+		data.m_flScale = 8.0f;
+
+		// See if we hit slime
+		if (waterTrace.contents & CONTENTS_SLIME)
+		{
+			data.m_fFlags |= FX_WATER_IN_SLIME;
+		}
+
+		DispatchEffect("watersplash", data);
+	}
+#endif
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseCombatWeapon::MeleeImpactEffect(trace_t& traceHit)
+{
+#ifndef CLIENT_DLL
+	// See if we hit water (we don't do the other impact effects in this case)
+	if (MeleeImpactWater(traceHit.startpos, traceHit.endpos))
+		return;
+
+	//FIXME: need new decals
+	UTIL_ImpactTrace(&traceHit, DMG_CLUB);
+#endif
 }
 
 void CBaseCombatWeapon::CalculateADS()
@@ -2183,6 +2243,27 @@ void CBaseCombatWeapon::ItemPostFrame( void )
 		m_bIsADS = false;
 	}
 
+	// Melee attack has the top priority
+	if ((pOwner->m_nButtons & IN_MELEE) && (m_flNextMeleeAttack <= gpGlobals->curtime))
+	{
+		if (pOwner->HasSpawnFlags(SF_PLAYER_SUPPRESS_MELEE) /* || m_bDisableMelee */)
+		{
+			// Don't do anything, just cancel the whole function
+			return;
+		}
+		//else if (pOwner->GetWaterLevel() == 3 && m_bAltFiresUnderwater == false)
+		//{
+		//	// No melee
+		//	WeaponSound(EMPTY);
+		//	m_flNextPrimaryAttack = gpGlobals->curtime + 0.2;
+		//	return;
+		//}
+		else
+		{
+			MeleeAttack();
+		}
+	}
+
 	// Secondary attack has priority
 	if ((pOwner->m_nButtons & IN_ATTACK2) && (m_flNextSecondaryAttack <= gpGlobals->curtime))
 	{
@@ -3102,6 +3183,9 @@ BEGIN_PREDICTION_DATA( CBaseCombatWeapon )
 	DEFINE_PRED_FIELD_TOL( m_flNextSecondaryAttack, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, TD_MSECTOLERANCE ),
 	DEFINE_PRED_FIELD_TOL( m_flTimeWeaponIdle, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, TD_MSECTOLERANCE ),
 
+	DEFINE_PRED_FIELD_TOL(m_flNextMeleeAttack, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, TD_MSECTOLERANCE),
+	DEFINE_PRED_FIELD(m_bDisableMelee, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
+
 	DEFINE_PRED_FIELD( m_iPrimaryAmmoType, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_iSecondaryAmmoType, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_iClip1, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),			
@@ -3267,6 +3351,9 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 	DEFINE_FIELD( m_flNextPrimaryAttack, FIELD_TIME ),
 	DEFINE_FIELD( m_flNextSecondaryAttack, FIELD_TIME ),
 	DEFINE_FIELD( m_flTimeWeaponIdle, FIELD_TIME ),
+
+	DEFINE_FIELD(m_flNextMeleeAttack, FIELD_TIME),
+	DEFINE_FIELD(m_bDisableMelee, FIELD_BOOLEAN),
 
 	DEFINE_FIELD( m_bInReload, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bFireOnEmpty, FIELD_BOOLEAN ),
@@ -3463,6 +3550,9 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalActiveWeaponData )
 	SendPropInt( SENDINFO( m_nNextThinkTick ) ),
 	SendPropTime( SENDINFO( m_flTimeWeaponIdle ) ),
 
+	SendPropTime(SENDINFO(m_flNextMeleeAttack)),
+	SendPropBool(SENDINFO(m_bDisableMelee)),
+
 #if defined( TF_DLL )
 	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
 #endif
@@ -3472,6 +3562,9 @@ BEGIN_NETWORK_TABLE_NOBASE( CBaseCombatWeapon, DT_LocalActiveWeaponData )
 	RecvPropTime( RECVINFO( m_flNextSecondaryAttack ) ),
 	RecvPropInt( RECVINFO( m_nNextThinkTick ) ),
 	RecvPropTime( RECVINFO( m_flTimeWeaponIdle ) ),
+
+	RecvPropTime(RECVINFO(m_flNextMeleeAttack)),
+	RecvPropBool(RECVINFO(m_bDisableMelee)),
 #endif
 END_NETWORK_TABLE()
 

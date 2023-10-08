@@ -2696,6 +2696,26 @@ typedef enum
 	ACT_HL2MP_JUMP_USE_HEAVY,
 #endif
 
+	// ======================
+	// The Set Sun Activities
+	// ======================
+
+	// Viewmodel Melee
+	ACT_VM_MELEEHIT,
+	ACT_VM_MELEEHIT2,
+	ACT_VM_MELEEHIT3,
+	ACT_VM_MELEEHIT_EMPTY,
+	ACT_VM_MELEEHIT_EMPTY2,
+	ACT_VM_MELEEHIT_EMPTY3,
+
+	ACT_VM_MELEEMISS,
+	ACT_VM_MELEEMISS2,
+	ACT_VM_MELEEMISS3,
+	ACT_VM_MELEEMISS_EMPTY,
+	ACT_VM_MELEEMISS_EMPTY2,
+	ACT_VM_MELEEMISS_EMPTY3,
+
+
 	// this is the end of the global activities, private per-monster activities start here.
 	LAST_SHARED_ACTIVITY,
 } Activity;
